@@ -21,4 +21,4 @@ To build the project, type `make`.
 
 **NOTE:** ch32v003 is rv32ec, do not use riscv-gcc v12.0 and above now due to the changes of riscv `-march` of gcc.
 
-**NOTE:** for [nanoCH32V003](https://github.com/wuxx/nanoCH32V003) board from muselab, the led is on PD6, you need modify  main.c in 'User' dir.
+**NOTE:** the default demo codes will toggle PD6 since [nanoCH32V003](https://github.com/wuxx/nanoCH32V003) board from muselab has the led connect to PD6, if your board is different, you need modify main.c in 'User' dir.
