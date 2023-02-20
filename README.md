@@ -13,10 +13,12 @@ This firmware library support below parts from WCH:
 
 The default part is set to 'ch32v003f4u6', you can change it with `./setpart.sh <part>`. the corresponding settings such flash and ram size will update automatically from the template. Since up to now, all known ch32v003 models had the same resources (16k flash, 2k ram), it only affect target name in Makefile. For new models in future, it can be added to `ch32v-parts-list.txt`.
 
-The default 'User' codes is 'GPIO_Toggle' from the EVT example, all examples shipped in original EVT package provided in 'Examples' dir.
+All examples shipped in original EVT package provided in 'Examples' dir.
+
+The default 'User' codes is 'GPIO_Toggle' example, the default system frequency is set to 'SYSCLK_FREQ_48MHZ_HSI' in 'User/system_ch32v00x.c'. 
 
 To build the project, type `make`.
 
 **NOTE:** ch32v003 is rv32ec, do not use riscv-gcc v12.0 and above now due to the changes of riscv `-march` of gcc.
 
-**NOTE:** for [nanoCH32V003](https://github.com/wuxx/nanoCH32V003) board from muselab, the led is on PD6, you need modify the main.c in 'User' dir.
+**NOTE:** for [nanoCH32V003](https://github.com/wuxx/nanoCH32V003) board from muselab, the led is on PD6, you need modify  main.c in 'User' dir.
