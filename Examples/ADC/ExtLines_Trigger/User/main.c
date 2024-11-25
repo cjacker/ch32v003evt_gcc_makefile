@@ -2,22 +2,22 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/22
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- External lines trigger ADC conversion routine:
- ADC channel 2 (PC4) - rule group channel, external trigger pin (PD3) high level
- triggers EXTI line 3 event,In this mode, an ADC conversion is triggered by an
- event on the EXTI line 3, and an EOC interrupt is generated after the conversion
-  is completed.
-
+ *External lines trigger ADC conversion routine:
+ *ADC channel 2 (PC4) - rule group channel, external trigger pin (PD3) high level
+ *triggers EXTI line 3 event,In this mode, an ADC conversion is triggered by an
+ *event on the EXTI line 3, and an EOC interrupt is generated after the conversion
+ *is completed.
+ *
 */
 
 #include "debug.h"
@@ -58,8 +58,8 @@ void ADC_Function_Init(void)
     ADC_ExternalTrigConvCmd(ADC1, ENABLE);
 
     NVIC_InitStructure.NVIC_IRQChannel = ADC_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
@@ -111,8 +111,15 @@ void EXTI_Event_Init(void)
  */
 int main(void)
 {
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     EXTI_Event_Init();
     ADC_Function_Init();

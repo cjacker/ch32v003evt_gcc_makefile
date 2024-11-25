@@ -2,23 +2,23 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- low power, sleep mode routine:
- EXTI_Line0(PD0)
- This routine demonstrates that WFI enters the sleep mode, and the PD0 pin input
- low level triggers the external interrupt EXTI_Line0 to exit the sleep mode,
- Program execution continues after wake-up.
-
-*/
+ *low power, sleep mode routine:
+ *EXTI_Line0(PD0)
+ *This routine demonstrates that WFI enters the sleep mode, and the PD0 pin input
+ *low level triggers the external interrupt EXTI_Line0 to exit the sleep mode,
+ *Program execution continues after wake-up.
+ *
+ */
 
 #include "debug.h"
 
@@ -43,7 +43,7 @@ void EXTI0_INT_INIT(void)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 
     /* GPIOA.0 ----> EXTI_Line0 */
@@ -55,8 +55,8 @@ void EXTI0_INT_INIT(void)
     EXTI_Init(&EXTI_InitStructure);
 
     NVIC_InitStructure.NVIC_IRQChannel = EXTI7_0_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 }
@@ -70,12 +70,18 @@ void EXTI0_INT_INIT(void)
  */
 int main(void)
 {
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
     Delay_Init();
     Delay_Ms(1000);
     Delay_Ms(1000);
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     printf("Sleep Mode Test\r\n");
     EXTI0_INT_INIT();
@@ -103,10 +109,10 @@ void EXTI7_0_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
  */
 void EXTI7_0_IRQHandler(void)
 {
-  if(EXTI_GetITStatus(EXTI_Line0)!=RESET)
-  {
-    printf("EXTI0 Wake_up\r\n");
-    EXTI_ClearITPendingBit(EXTI_Line0);     /* Clear Flag */
-  }
+    if(EXTI_GetITStatus(EXTI_Line0)!=RESET)
+    {
+        printf("EXTI0 Wake_up\r\n");
+        EXTI_ClearITPendingBit(EXTI_Line0);     /* Clear Flag */
+    }
 }
 

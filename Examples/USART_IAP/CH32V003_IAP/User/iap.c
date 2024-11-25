@@ -2,7 +2,7 @@
  * File Name          : iap.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/11/21
+ * Date               : 2023/12/21
  * Description        : IAP
  *******************************************************************************
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -104,7 +104,6 @@ u8 RecData_Deal(void)
                     Fast_Program_Buf[CodeLen + i] = 0xFF;
                 }
 
-
                 CH32_IAP_Program(Program_addr, (u32*) Fast_Program_Buf);
                 CodeLen = 0;
             }
@@ -128,6 +127,8 @@ u8 RecData_Deal(void)
             Verity_addr = FLASH_Base;
 
             s = ERR_End;
+            FLASH->CTLR |= ((uint32_t)0x00008000);
+            FLASH->CTLR |= ((uint32_t)0x00000080);
             break;
 
         default:
@@ -147,13 +148,9 @@ u8 RecData_Deal(void)
  */
 void GPIO_Cfg_init(void)
 {
-
-
    GPIOC->CFGLR&=~0x4;
    GPIOC->CFGLR=0x8;
    GPIOC->BSHR = ((uint32_t)0x01);
-
-
 }
 
 /*********************************************************************
@@ -236,8 +233,8 @@ void UART1_SendData(u8 data)
  */
 u8 Uart1_Rx(void)
 {
-    while( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
-    return USART_ReceiveData( USART1);
+    while( (USART1->STATR & USART_FLAG_RXNE) == RESET);
+    return (uint16_t)(USART1->DATAR & (uint16_t)0x01FF);
 }
 
 /*********************************************************************

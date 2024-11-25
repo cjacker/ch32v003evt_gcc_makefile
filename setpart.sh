@@ -57,7 +57,6 @@ setpart()
     sed "s/FLASH_SIZE/$FLASHSIZE/g" Link.ld.template.$PART_FAMILY > CH32V_firmware_library/Ld/Link.ld
     sed -i "s/RAM_SIZE/$RAMSIZE/g" CH32V_firmware_library/Ld/Link.ld
     sed -i "s/^CH32V_firmware_library\/Startup\/startup.*/CH32V_firmware_library\/Startup\/$STARTUP_ASM/g" Makefile
-    sed -i "s/CH32VXXX/$PART/g" Makefile
   else
     echo "Not $PART_FAMILY project, can not set part to $PART"
     exit
@@ -74,6 +73,13 @@ fi
 
 if [[ $PART = ch32v2* ]]; then
 	setpart ch32v2
+  if [ $STARTUP_ASM == "startup_ch32v20x_D8.S" ]; then
+    sed -i "s/^TARGET_DEFS =.*/TARGET_DEFS = -DCH32V20x_D8/g" Makefile
+  elif [ $STARTUP_ASM == "startup_ch32v20x_D8W.S" ]; then
+    sed -i "s/^TARGET_DEFS =.*/TARGET_DEFS = -DCH32V20x_D8W/g" Makefile
+  else
+    sed -i "s/^TARGET_DEFS =.*/TARGET_DEFS = /g" Makefile
+  fi
 fi
 
 if [[ $PART = ch32v3* ]]; then

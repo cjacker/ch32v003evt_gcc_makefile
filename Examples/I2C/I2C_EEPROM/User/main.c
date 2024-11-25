@@ -2,33 +2,33 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- I2C interface routine to operate EEPROM peripheral:
- I2C1_SCL(PC2)\I2C1_SDA(PC1).
-  This example uses EEPROM for AT24Cxx series.
-  Steps:
- READ EEPROM:Start + 0xA0 + 8bit Data Address + Start + 0xA1 + Read Data + Stop.
- WRITE EERPOM:Start + 0xA0 + 8bit Data Address + Write Data + Stop.
-
-*/
+ *I2C interface routine to operate EEPROM peripheral:
+ *I2C1_SCL(PC2)\I2C1_SDA(PC1).
+ *This example uses EEPROM for AT24Cxx series.
+ *Steps:
+ *READ EEPROM:Start + 0xA0 + 8bit Data Address + Start + 0xA1 + Read Data + Stop.
+ *WRITE EERPOM:Start + 0xA0 + 8bit Data Address + Write Data + Stop.
+ *
+ */
 
 #include "debug.h"
 
 /**********************************************************************
 *@Note:
-AT24Cxx��
+AT24Cxx:
 
-READ EEPROM��Start + 0xA0 + 8bit Data Address + Start + 0xA1 + Read Data + Stop.
-WRITE EERPOM��Start + 0xA0 + 8bit Data Address + Write Data + Stop.
+READ EEPROM:Start + 0xA0 + 8bit Data Address + Start + 0xA1 + Read Data + Stop.
+WRITE EERPOM:Start + 0xA0 + 8bit Data Address + Write Data + Stop.
 *******************************************************************************/
 /* EERPOM DATA ADDRESS Length Definition */
 #define Address_8bit  0
@@ -61,12 +61,12 @@ void IIC_Init(u32 bound, u16 address)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
     I2C_InitTSturcture.I2C_ClockSpeed = bound;
@@ -79,7 +79,6 @@ void IIC_Init(u32 bound, u16 address)
 
     I2C_Cmd( I2C1, ENABLE );
 
-    I2C_AcknowledgeConfig( I2C1, ENABLE );
 }
 
 /*********************************************************************
@@ -237,9 +236,13 @@ int main(void)
 {
     u8 data[SIZE];
 
+    SystemCoreClockUpdate();
     Delay_Init();
-    USART_Printf_Init(115200);
+
+    USART_Printf_Init(460800);
+
     printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     AT24CXX_Init();
 

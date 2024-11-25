@@ -2,7 +2,7 @@
 # target
 ######################################
 TARGET = ch32v003f4u6
-
+TARGET_DEFS=
 
 ######################################
 # building variables
@@ -24,27 +24,27 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES = \
-CH32V_firmware_library/Debug/debug.c \
-CH32V_firmware_library/Core/core_riscv.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_iwdg.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_misc.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_rcc.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_dbgmcu.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_tim.c \
 CH32V_firmware_library/Peripheral/src/ch32v00x_dma.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_gpio.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_wwdg.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_usart.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_flash.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_exti.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_pwr.c \
 CH32V_firmware_library/Peripheral/src/ch32v00x_opa.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_i2c.c \
-CH32V_firmware_library/Peripheral/src/ch32v00x_adc.c \
 CH32V_firmware_library/Peripheral/src/ch32v00x_spi.c \
-User/system_ch32v00x.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_adc.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_rcc.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_misc.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_wwdg.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_pwr.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_tim.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_iwdg.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_gpio.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_dbgmcu.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_i2c.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_flash.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_usart.c \
+CH32V_firmware_library/Peripheral/src/ch32v00x_exti.c \
+CH32V_firmware_library/Core/core_riscv.c \
+CH32V_firmware_library/Debug/debug.c \
 User/main.c \
 User/ch32v00x_it.c \
+User/system_ch32v00x.c \
 
 
 # ASM sources
@@ -99,6 +99,7 @@ endif
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
+CFLAGS += $(TARGET_DEFS)
 
 #######################################
 # LDFLAGS
@@ -149,7 +150,7 @@ $(BUILD_DIR):
 # Program
 #######################################
 program: $(BUILD_DIR)/$(TARGET).elf 
-	sudo wch-openocd -f /usr/share/wch-openocd/openocd/scripts/interface/wch-riscv.cfg -c 'init; halt; program $(BUILD_DIR)/$(TARGET).elf verify; reset; wlink_reset_resume; exit;'
+	sudo wch-openocd -f ./wch-riscv.cfg -c 'init; halt; program $(BUILD_DIR)/$(TARGET).elf verify; reset; wlink_reset_resume; exit;'
 
 isp: $(BUILD_DIR)/$(TARGET).bin
 	wchisp flash $(BUILD_DIR)/$(TARGET).bin

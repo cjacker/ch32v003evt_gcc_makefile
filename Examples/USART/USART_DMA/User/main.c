@@ -2,27 +2,27 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- USART DMA, master/slave mode transceiver routine:
- USART1_Tx(PD5)\USART1_Rx(PD6).
-
- This routine demonstrates that two boards use DMA to send and receive.
- After successful sending and receiving, PD0 is connected to LED,
- and the LED light flashes.
-
-   Hardware connection:PD5 -- PD6
-                       PD6 -- PD5
-                       PDO -- LED
-
+ *USART DMA, master/slave mode transceiver routine:
+ *USART1_Tx(PD5)\USART1_Rx(PD6).
+ *
+ *This routine demonstrates that two boards use DMA to send and receive.
+ *After successful sending and receiving, PD0 is connected to LED,
+ *and the LED light flashes.
+ *
+ *   Hardware connection:PD5 -- PD6
+ *                       PD6 -- PD5
+ *                       PDO -- LED
+ *
 */
 
 #include "debug.h"
@@ -59,7 +59,7 @@ void GPIO_Toggle_INIT(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     GPIO_SetBits(GPIOD, GPIO_Pin_0);
 }
@@ -105,7 +105,7 @@ void USARTx_CFG(void)
 
     /* USART1 TX-->D.5   RX-->D.6 */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -172,7 +172,8 @@ int main(void)
 {
     u8 i=0;
 
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
     Delay_Init();
     GPIO_Toggle_INIT();
     DMA_INIT();

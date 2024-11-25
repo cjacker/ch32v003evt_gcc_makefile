@@ -2,13 +2,13 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
@@ -81,7 +81,7 @@ void USART1_ReCFG(void)
 
     /* USART1 TX-->D.5   RX-->D.6 */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; /* RTS-->C.2 */
@@ -113,12 +113,13 @@ void USART1_ReCFG(void)
  */
 int main(void)
 {
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
     Delay_Init();
     USART1_ReCFG();
 
     printf("USART1 Hardware Flow Control TEST\r\n");
-
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
     while(TxCnt < TxSize)
     {
         USART_SendData(USART1, TxBuffer[TxCnt++]);

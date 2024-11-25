@@ -2,7 +2,7 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2024/07/04
  * Description        : Main program body.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -30,10 +30,17 @@
  */
 int main(void)
 {
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
-    NVIC_EnableIRQ(SysTicK_IRQn);
+    NVIC_EnableIRQ(SysTick_IRQn);
     SysTick->SR &= ~(1 << 0);
     SysTick->CMP = SystemCoreClock-1;
     SysTick->CNT = 0;
@@ -45,9 +52,9 @@ int main(void)
 void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 /*********************************************************************
- * @fn      ADC1_IRQHandler
+ * @fn      SysTick_IRQHandler
  *
- * @brief   ADC1_2 Interrupt Service Function.
+ * @brief   SysTick Interrupt Service Function.
  *
  * @return  none
  */

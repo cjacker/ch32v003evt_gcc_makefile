@@ -50,7 +50,7 @@ void TIM1_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOD, &GPIO_InitStructure );
 
     TIM_TimeBaseInitStructure.TIM_Period = arr;
@@ -86,8 +86,15 @@ void TIM1_PWMOut_Init(u16 arr, u16 psc, u16 ccp)
  */
 int main(void)
 {
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     TIM1_PWMOut_Init( 100, 48000-1, 50 );
 

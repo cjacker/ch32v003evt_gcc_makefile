@@ -2,19 +2,19 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/22
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- Automatic injection mode routine:
- ADC channel 2 (PC4) - regular group channel, channel 3 (PD2) - injection group channel
-
+ *Automatic injection mode routine:
+ *ADC channel 2 (PC4) - regular group channel, channel 3 (PD2) - injection group channel
+ *
 */
 
 #include "debug.h"
@@ -52,6 +52,7 @@ void ADC_Function_Init(void)
     ADC_InitStructure.ADC_NbrOfChannel = 1;
     ADC_Init(ADC1, &ADC_InitStructure);
 
+    ADC_InjectedSequencerLengthConfig(ADC1, 1);
     ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 1, ADC_SampleTime_241Cycles);
     ADC_InjectedChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_241Cycles);
     ADC_Calibration_Vol(ADC1, ADC_CALVOL_50PERCENT);
@@ -108,9 +109,15 @@ int main(void)
     u16 adc_val;
     u16 adc_jval;
 
+    SystemCoreClockUpdate();
     Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     ADC_Function_Init();
 

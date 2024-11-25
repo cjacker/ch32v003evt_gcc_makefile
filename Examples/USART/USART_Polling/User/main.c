@@ -2,25 +2,25 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- Multiprocessor communication mode routine:
- Master:USART1_Tx(PD5)\USART1_Rx(PD6).
- This routine demonstrates that USART1 receives the data sent by CH341 and inverts
- it and sends it (baud rate 115200).
-
- Hardware connection:PD5 -- Rx
-                     PD6 -- Tx
-
-*/
+ *Multiprocessor communication mode routine:
+ *Master:USART1_Tx(PD5)\USART1_Rx(PD6).
+ *This routine demonstrates that USART1 receives the data sent by CH341 and inverts
+ *it and sends it (baud rate 115200).
+ *
+ *Hardware connection:PD5 -- Rx
+ *                     PD6 -- Tx
+ *
+ */
 
 #include "debug.h"
 
@@ -47,7 +47,7 @@ void USARTx_CFG(void)
 
     /* USART1 TX-->D.5   RX-->D.6 */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -74,10 +74,16 @@ void USARTx_CFG(void)
  */
 int main(void)
 {
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
     Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     USARTx_CFG();
 

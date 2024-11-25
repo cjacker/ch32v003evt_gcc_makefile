@@ -2,29 +2,32 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2024/06/01
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- two-wire full duplex mode, master/slave mode, data transceiver:
- Master:SPI1_SCK(PC5)、SPI1_MISO(PC7)、SPI1_MOSI(PC6).
- Slave:SPI1_SCK(PC5)、SPI1_MISO(PC7)、SPI1_MOSI(PC6).
-
- This example demonstrates simultaneous full-duplex transmission and reception
- between Master and Slave.
- Note: The two boards download the Master and Slave programs respectively,
- and power on at the same time.
-  Hardware connection:PC5 -- PC5
-                      PC6 -- PC6
-                      PC7 -- PC7
-
-*/
+ *two-wire full duplex mode, master/slave mode, data transceiver:
+ *Master:SPI1_SCK(PC5)、SPI1_MISO(PC7)、SPI1_MOSI(PC6).
+ *Slave:SPI1_SCK(PC5)、SPI1_MISO(PC7)、SPI1_MOSI(PC6).
+ *
+ *This example demonstrates simultaneous full-duplex transmission and reception
+ *between Master and Slave.
+ *Note: The two boards download the Master and Slave programs respectively,
+ *and power on at the same time.
+ *Hardware connection:PC5 -- PC5
+ *                      PC6 -- PC6
+ *                      PC7 -- PC7
+ *When using SPI slave mode to send data:
+ *  -the CPOL bit should be set to 1
+ *  -the data should be sent using spi mode 2 or spi mode 3. 
+ * 
+ */
 
 
 #include "debug.h"
@@ -65,7 +68,7 @@ void SPI_FullDuplex_Init(void)
 #if (SPI_MODE == HOST_MODE)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
@@ -74,7 +77,7 @@ void SPI_FullDuplex_Init(void)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
 #elif (SPI_MODE == SLAVE_MODE)
@@ -84,7 +87,7 @@ void SPI_FullDuplex_Init(void)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
@@ -104,8 +107,8 @@ void SPI_FullDuplex_Init(void)
 #endif
 
     SPI_InitStructure.SPI_DataSize = SPI_DataSize_16b;
-    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
-    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+    SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+    SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
     SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
     SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
     SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
@@ -128,12 +131,14 @@ int main(void)
     u8 j=0;
     u8 value;
 
+    SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(460800);
     printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
 #if (SPI_MODE == SLAVE_MODE)
-  printf("Slave Mode\r\n");
+    printf("Slave Mode\r\n");
     Delay_Ms(1000);
 
 #endif
@@ -141,7 +146,7 @@ int main(void)
     SPI_FullDuplex_Init();
 
 #if (SPI_MODE == HOST_MODE)
-  printf("Host Mode\r\n");
+    printf("Host Mode\r\n");
     Delay_Ms(2000);
 
 #endif

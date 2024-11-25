@@ -2,26 +2,26 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/22
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- 7-bit addressing mode, master/slave mode, transceiver routine:
- I2C1_SCL(PC2)\I2C1_SDA(PC1).
-  This routine demonstrates that Master sends and Slave receives.
-  Note: The two boards download the Master and Slave programs respectively,
-   and power on at the same time.
-      Hardware connection:
-            PC2 -- PC2
-            PC1 -- PC1
-
-*/
+ *7-bit addressing mode, master/slave mode, transceiver routine:
+ *I2C1_SCL(PC2)\I2C1_SDA(PC1).
+ *This routine demonstrates that Master sends and Slave receives.
+ *Note: The two boards download the Master and Slave programs respectively,
+ *    and power on at the same time.
+ *      Hardware connection:
+ *            PC2 -- PC2
+ *            PC1 -- PC1
+ *
+ */
 
 #include "debug.h"
 
@@ -59,12 +59,12 @@ void IIC_Init(u32 bound, u16 address)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOC, &GPIO_InitStructure );
 
     I2C_InitTSturcture.I2C_ClockSpeed = bound;
@@ -77,10 +77,6 @@ void IIC_Init(u32 bound, u16 address)
 
     I2C_Cmd( I2C1, ENABLE );
 
-#if (I2C_MODE == HOST_MODE)
-    I2C_AcknowledgeConfig( I2C1, ENABLE );
-
-#endif
 }
 
 /*********************************************************************
@@ -95,9 +91,13 @@ int main(void)
     u8 i = 0;
 	u8 j = 0;
 	u8 p = 0;
+    SystemCoreClockUpdate();
     Delay_Init();
+
     USART_Printf_Init(460800);
+
     printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
 #if (I2C_MODE == HOST_MODE)
     printf("IIC Host mode\r\n");

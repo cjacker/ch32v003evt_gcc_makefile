@@ -2,21 +2,21 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/22
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- Discontinuous mode routine:
- ADC channel 2 (PC4) - injection group channel, channel 3 (PD2) - injection group channel,
- channel 4 (PD3) - injection group channel, this mode Next, an ADC conversion is triggered
- by the TIM1_CC3 event, and each channel of the above-mentioned injection group is converted in turn.
-
+ *Discontinuous mode routine:
+ *ADC channel 2 (PC4) - injection group channel, channel 3 (PD2) - injection group channel,
+ *channel 4 (PD3) - injection group channel, this mode Next, an ADC conversion is triggered
+ *by the TIM1_CC3 event, and each channel of the above-mentioned injection group is converted in turn.
+ *
 */
 
 #include "debug.h"
@@ -55,7 +55,7 @@ void ADC_Function_Init(void)
     ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
     ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigInjecConv_T1_CC3;
     ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-    ADC_InitStructure.ADC_NbrOfChannel = 3;
+    ADC_InitStructure.ADC_NbrOfChannel = 1;
     ADC_Init(ADC1, &ADC_InitStructure);
 
     ADC_InjectedSequencerLengthConfig(ADC1, 3);
@@ -96,7 +96,7 @@ void TIM1_PWM_In(u16 arr, u16 psc, u16 ccp)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
     TIM_TimeBaseInitStructure.TIM_Period = arr;
@@ -127,8 +127,15 @@ void TIM1_PWM_In(u16 arr, u16 psc, u16 ccp)
  */
 int main(void)
 {
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     ADC_Function_Init();
 

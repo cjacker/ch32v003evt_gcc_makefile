@@ -4,21 +4,21 @@
  * Version            : V1.0.0
  * Date               : 2022/08/08
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- Output comparison mode routine:
- TIM1_CH1(PD2)
- This example demonstrates the output waveform of the TIM_CH1(PD2) pin in 4 output comparison modes.
-  Output compare modes include
- OutCompare_Timing\OutCompare_Active\OutCompare_Inactive\OutCompare_Toggle.
-
-*/
+ *Output comparison mode routine:
+ *TIM1_CH1(PD2)
+ *This example demonstrates the output waveform of the TIM_CH1(PD2) pin in 4 output comparison modes.
+ *Output compare modes include
+ *OutCompare_Timing\OutCompare_Active\OutCompare_Inactive\OutCompare_Toggle.
+ *
+ */
 
 #include "debug.h"
 
@@ -55,7 +55,7 @@ void TIM1_OutCompare_Init(u16 arr, u16 psc, u16 ccp)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init( GPIOD, &GPIO_InitStructure );
 
     TIM_TimeBaseInitStructure.TIM_Period = arr;
@@ -98,8 +98,15 @@ void TIM1_OutCompare_Init(u16 arr, u16 psc, u16 ccp)
  */
 int main(void)
 {
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     TIM1_OutCompare_Init( 100, 48000-1, 50 );
 

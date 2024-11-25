@@ -2,7 +2,7 @@
  * File Name          : ch32v00x_it.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main Interrupt Service Routines.
 *********************************************************************************
 * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -13,7 +13,6 @@
 
 void NMI_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void HardFault_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
-void SW_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 /*********************************************************************
  * @fn      NMI_Handler
  *
@@ -23,6 +22,9 @@ void SW_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
  */
 void NMI_Handler(void)
 {
+  while (1)
+  {
+  }
 }
 
 /*********************************************************************
@@ -34,17 +36,11 @@ void NMI_Handler(void)
  */
 void HardFault_Handler(void)
 {
+  NVIC_SystemReset();
   while (1)
   {
   }
 }
 
-void SW_Handler(void)
-{
 
-//    __asm("li  a6, 0x1800");
-//    __asm("jr  a6");
-//    while(1);
-
-}
 

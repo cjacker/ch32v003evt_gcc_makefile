@@ -2,29 +2,29 @@
  * File Name          : main.c
  * Author             : WCH
  * Version            : V1.0.0
- * Date               : 2022/08/08
+ * Date               : 2023/12/25
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- Synchronous mode routine:
- Master:USART1_CK(PD4)\USART1_Tx(PD5)\USART1_Rx(PD6).
- Slave:SPI1_SCK(PC5)\SPI1_MISO(PC7)\SPI1_MOSI(PC6).
- This example demonstrates using USART1 as the master and SPI1 as the slave, sending 
- and receiving data in full-duplex mode, and connecting the LED to PD0 after successful 
- sending and receiving, and it will blink.
- UART1-LSB  SPI1-MSB
-
-Hardware connection:PD4 --PC5
-          PD5--PC6
-          PD6--PC7
-          PDO--LED
-*/
+ *Synchronous mode routine:
+ *Master:USART1_CK(PD4)\USART1_Tx(PD5)\USART1_Rx(PD6).
+ *Slave:SPI1_SCK(PC5)\SPI1_MISO(PC7)\SPI1_MOSI(PC6).
+ *This example demonstrates using USART1 as the master and SPI1 as the slave, sending 
+ *and receiving data in full-duplex mode, and connecting the LED to PD0 after successful 
+ *sending and receiving, and it will blink.
+ *UART1-LSB  SPI1-MSB
+ *
+ *Hardware connection:PD4 --PC5
+ *          PD5--PC6
+ *          PD6--PC7
+ *          PDO--LED
+ */
 
 #include "debug.h"
 
@@ -68,7 +68,7 @@ void GPIO_Toggle_INIT(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
     GPIO_SetBits(GPIOD, GPIO_Pin_0);
 }
@@ -115,7 +115,7 @@ void USART1_ReCFG(void)
 
     /* USART1  Ck-->D.4   TX-->D.5   RX-->D.6 */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
      GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
      GPIO_Init(GPIOD, &GPIO_InitStructure);
 
@@ -160,7 +160,7 @@ void SPI1_INIT(void)
     SPI_I2S_DeInit(SPI1);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7; /* SPI1 MISO-->PC.7 */
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6; /* SPI1 SCK-->PC.5 MOSI-->PC.6 */
@@ -190,7 +190,8 @@ int main(void)
 {
     u8 i=0;
 
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+    SystemCoreClockUpdate();
     Delay_Init();
     Delay_Ms(1000);
     GPIO_Toggle_INIT();

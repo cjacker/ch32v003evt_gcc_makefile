@@ -4,21 +4,21 @@
  * Version            : V1.0.0
  * Date               : 2022/08/08
  * Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for 
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
- complementary output and deadband insertion mode routines:
- TIM1_CH1(PD2),TIM1_CH1N(PD0)
- This example demonstrates three complementary output modes with dead zone of TIM1: complementary
- output with dead zone insertion, dead zone waveform delay Greater than the negative pulse, the dead
-  zone waveform delay is greater than the positive pulse.
-
-*/
+ *complementary output and deadband insertion mode routines:
+ *TIM1_CH1(PD2),TIM1_CH1N(PD0)
+ *This example demonstrates three complementary output modes with dead zone of TIM1: complementary
+ *output with dead zone insertion, dead zone waveform delay Greater than the negative pulse, the dead
+ *zone waveform delay is greater than the positive pulse.
+ *
+ */
 
 #include "debug.h"
 
@@ -45,13 +45,13 @@ void TIM1_Dead_Time_Init(u16 arr, u16 psc, u16 ccp)
     /* TIM1_CH1 */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 
     /* TIM1_CH1N */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_30MHz;
     GPIO_Init(GPIOD, &GPIO_InitStructure);
 
     TIM_TimeBaseInitStructure.TIM_Period = arr;
@@ -94,8 +94,15 @@ void TIM1_Dead_Time_Init(u16 arr, u16 psc, u16 ccp)
  */
 int main(void)
 {
+    SystemCoreClockUpdate();
+    Delay_Init();
+#if (SDI_PRINT == SDI_PR_OPEN)
+    SDI_Printf_Enable();
+#else
     USART_Printf_Init(115200);
+#endif
     printf("SystemClk:%d\r\n", SystemCoreClock);
+    printf( "ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
 
     /* Complementary output with dead-time insertion */
     TIM1_Dead_Time_Init(100, 48 - 1, 50);
