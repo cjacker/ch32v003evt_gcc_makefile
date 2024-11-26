@@ -22,3 +22,8 @@ To build the project, type `make`.
 **NOTE:** '-march=rv32ec_zicsr' works with xpack gcc v14.2.0. for gcc version below v12, you may need change it to '-march=rv32ec'.
 
 **NOTE:** the default demo codes will toggle PD6 since [nanoCH32V003](https://github.com/wuxx/nanoCH32V003) board from muselab has the led connect to PD6, change it according to your own board.
+
+**NOTE:** Please refer to [opensource-toolchain-ch32v tutorial](https://github.com/cjacker/opensource-toolchain-ch32v) for more info.
+
+**NOTE:** you must use [this latest WCH OpenOCD](https://github.com/cjacker/wch-openocd).
+
